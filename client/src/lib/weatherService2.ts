@@ -188,8 +188,19 @@ export const getCurrentLocation = (): Promise<{ lat: number, lon: number }> => {
       return;
     }
     
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 300000 // 5 minutes cache
+    };
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log('Location detected successfully:', {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        });
         resolve({
           lat: position.coords.latitude,
           lon: position.coords.longitude
@@ -197,9 +208,23 @@ export const getCurrentLocation = (): Promise<{ lat: number, lon: number }> => {
       },
       (error) => {
         console.error('Geolocation error:', error);
-        reject(error);
+        let errorMessage = 'Unknown geolocation error';
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied by user';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information unavailable';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out';
+            break;
+        }
+        
+        reject(new Error(errorMessage));
       },
-      { timeout: 10000 }
+      options
     );
   });
 };

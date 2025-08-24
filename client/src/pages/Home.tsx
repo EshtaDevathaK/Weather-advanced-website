@@ -38,10 +38,17 @@ export default function Home() {
     const detectLocation = async () => {
       try {
         setIsDetectingLocation(true);
-        const coords = await getCurrentLocation();
+        
+        // Add a timeout to prevent hanging
+        const locationPromise = getCurrentLocation();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Location detection timed out')), 15000)
+        );
+        
+        const coords = await Promise.race([locationPromise, timeoutPromise]);
         setSearchLocation(coords);
         toast({
-          title: "Location detected!",
+          title: "📍 Location detected!",
           description: "Showing weather for your current location",
         });
       } catch (error) {
@@ -49,8 +56,8 @@ export default function Home() {
         // Fallback to default location
         setSearchLocation("Los Angeles");
         toast({
-          title: "Location detection failed",
-          description: "Showing weather for Los Angeles. You can search for your location manually.",
+          title: "⚠️ Location detection failed",
+          description: "Showing weather for Los Angeles. You can search for your location manually or try the 'My Location' button.",
           variant: "destructive",
         });
       } finally {
@@ -58,7 +65,9 @@ export default function Home() {
       }
     };
 
-    detectLocation();
+    // Add a small delay to show the loading state
+    const timer = setTimeout(detectLocation, 500);
+    return () => clearTimeout(timer);
   }, [toast]);
 
   const { data: weatherData, isLoading, error, refetch } = useQuery({
@@ -118,6 +127,29 @@ export default function Home() {
           <div className="space-y-2">
             <h2 className="text-2xl font-bold text-white">Detecting Your Location</h2>
             <p className="text-white/80 text-lg">Please allow location access to see weather for your area...</p>
+            <div className="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
+              <p className="text-sm text-white/90">
+                💡 <strong>Tip:</strong> If location detection takes too long, you can:
+              </p>
+              <ul className="text-xs text-white/70 mt-2 space-y-1">
+                <li>• Check your browser's location permissions</li>
+                <li>• Try refreshing the page</li>
+                <li>• Use the search bar to find your city manually</li>
+              </ul>
+              <button 
+                onClick={() => {
+                  setSearchLocation("Los Angeles");
+                  setIsDetectingLocation(false);
+                  toast({
+                    title: "📍 Using default location",
+                    description: "Showing weather for Los Angeles. You can search for your city anytime!",
+                  });
+                }}
+                className="mt-3 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm transition-all duration-200 hover:scale-105"
+              >
+                🚀 Skip & Use Default Location
+              </button>
+            </div>
           </div>
           
           {/* Animated Dots */}
@@ -252,23 +284,43 @@ export default function Home() {
                   onClick={async () => {
                     try {
                       setIsDetectingLocation(true);
-                      const coords = await getCurrentLocation();
+                      
+                      // Add timeout to prevent hanging
+                      const locationPromise = getCurrentLocation();
+                      const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Location detection timed out')), 15000)
+                      );
+                      
+                      const coords = await Promise.race([locationPromise, timeoutPromise]);
                       setSearchLocation(coords);
                       toast({
-                        title: "Location updated!",
+                        title: "📍 Location updated!",
                         description: "Showing weather for your current location",
                       });
                     } catch (error) {
+                      console.error('Location detection error:', error);
+                      let errorMessage = "Please check your location permissions";
+                      
+                      if (error instanceof Error) {
+                        if (error.message.includes('timeout')) {
+                          errorMessage = "Location detection timed out. Please try again.";
+                        } else if (error.message.includes('denied')) {
+                          errorMessage = "Location access denied. Please enable location permissions in your browser.";
+                        } else if (error.message.includes('unavailable')) {
+                          errorMessage = "Location service unavailable. Please try again later.";
+                        }
+                      }
+                      
                       toast({
-                        title: "Location detection failed",
-                        description: "Please check your location permissions",
+                        title: "⚠️ Location detection failed",
+                        description: errorMessage,
                         variant: "destructive",
                       });
                     } finally {
                       setIsDetectingLocation(false);
                     }
                   }}
-                  className="glass-dark px-4 py-2 text-white rounded-full text-sm hover-lift hover-glow transition-all duration-300"
+                  className="glass-dark px-4 py-2 text-white rounded-full text-sm hover-lift hover-glow transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isDetectingLocation}
                 >
                   📍 {isDetectingLocation ? 'Detecting...' : 'My Location'}

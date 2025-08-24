@@ -46,10 +46,17 @@ export default function Analytics() {
     const detectLocation = async () => {
       try {
         setIsDetectingLocation(true);
-        const coords = await getCurrentLocation();
+        
+        // Add a timeout to prevent hanging
+        const locationPromise = getCurrentLocation();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Location detection timed out')), 15000)
+        );
+        
+        const coords = await Promise.race([locationPromise, timeoutPromise]);
         setSearchLocation(coords);
         toast({
-          title: "Location detected!",
+          title: "📍 Location detected!",
           description: "Showing analytics for your current location",
         });
       } catch (error) {
@@ -57,7 +64,7 @@ export default function Analytics() {
         // Fallback to default location
         setSearchLocation("Los Angeles");
         toast({
-          title: "Location detection failed",
+          title: "⚠️ Location detection failed",
           description: "Showing analytics for Los Angeles. You can search for your location manually.",
           variant: "destructive",
         });
@@ -66,7 +73,9 @@ export default function Analytics() {
       }
     };
 
-    detectLocation();
+    // Add a small delay to show the loading state
+    const timer = setTimeout(detectLocation, 500);
+    return () => clearTimeout(timer);
   }, [toast]);
 
   // Fetch weather data with error handling

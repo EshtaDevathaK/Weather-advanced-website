@@ -20,10 +20,17 @@ export default function Forecast() {
     const detectLocation = async () => {
       try {
         setIsDetectingLocation(true);
-        const coords = await getCurrentLocation();
+        
+        // Add a timeout to prevent hanging
+        const locationPromise = getCurrentLocation();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Location detection timed out')), 15000)
+        );
+        
+        const coords = await Promise.race([locationPromise, timeoutPromise]);
         setSearchLocation(coords);
         toast({
-          title: "Location detected!",
+          title: "📍 Location detected!",
           description: "Showing forecast for your current location",
         });
       } catch (error) {
@@ -31,7 +38,7 @@ export default function Forecast() {
         // Fallback to default location
         setSearchLocation("Los Angeles");
         toast({
-          title: "Location detection failed",
+          title: "⚠️ Location detection failed",
           description: "Showing forecast for Los Angeles. You can search for your location manually.",
           variant: "destructive",
         });
@@ -40,7 +47,9 @@ export default function Forecast() {
       }
     };
 
-    detectLocation();
+    // Add a small delay to show the loading state
+    const timer = setTimeout(detectLocation, 500);
+    return () => clearTimeout(timer);
   }, [toast]);
   
   const { data: weatherData, isLoading, error, refetch } = useQuery({

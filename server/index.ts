@@ -59,22 +59,22 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  const isDevelopment = app.get("env") === "development" || process.env.NODE_ENV === "development";
+  
+  if (isDevelopment) {
+    log("🔧 Development mode: Setting up Vite dev server...");
     await setupVite(app, server);
+    log("✅ Vite dev server configured successfully");
   } else {
+    log("🚀 Production mode: Setting up static file serving...");
+    log(`📁 Environment: ${process.env.NODE_ENV || 'production'}`);
+    log(`📁 Working directory: ${process.cwd()}`);
     serveStatic(app);
-    
-    // Serve static files from the build directory
-    app.use(express.static(path.join(__dirname, '../dist/public')));
-    
-    // Handle client-side routing by serving index.html for all routes
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../dist/public/index.html'));
-    });
+    log("✅ Static file serving configured successfully");
   }
 
   // Use dynamic port from environment or fallback to 5000
-  const port = parseInt(process.env.SERVER_PORT || '5000') || 5000;
+  const port = parseInt(process.env.SERVER_PORT || process.env.PORT || '5000') || 5000;
   
   // Handle port conflicts gracefully
   server.on('error', (err: any) => {
