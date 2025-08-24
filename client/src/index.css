@@ -1,0 +1,331 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    min-height: 100vh;
+    color: #f8fafc;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Form Elements - Dark Theme */
+  input, textarea, select {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    color: #f8fafc !important;
+    border-color: rgba(148, 163, 184, 0.2) !important;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgba(148, 163, 184, 0.6) !important;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    border-color: #3b82f6 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+  }
+
+  /* Select dropdowns */
+  select option {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+  }
+
+  /* Button styling for dark theme */
+  button {
+    transition: all 0.2s ease;
+  }
+
+  button:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+  }
+}
+
+@layer components {
+  /* Modern Shadows */
+  .shadow-soft {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .shadow-elevation {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  
+  .shadow-card {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Glass Morphism Effect - Dark Theme */
+  .glass {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+  }
+  
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+  }
+  
+  /* Modern Gradients - Dark Theme */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+  }
+  
+  .bg-gradient-secondary {
+    background: linear-gradient(135deg, #7c3aed 0%, #dc2626 100%);
+  }
+  
+  .bg-gradient-success {
+    background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  }
+  
+  .bg-gradient-warning {
+    background: linear-gradient(135deg, #d97706 0%, #dc2626 100%);
+  }
+  
+  /* Enhanced Color Classes - Dark Theme */
+  .bg-navy {
+    @apply bg-slate-800;
+  }
+  
+  .text-navy {
+    @apply text-slate-200;
+  }
+  
+  .text-navy-light {
+    @apply text-slate-400;
+  }
+  
+  .bg-primary-light {
+    @apply bg-blue-600;
+  }
+  
+  .bg-primary-dark {
+    @apply bg-blue-800;
+  }
+  
+  .bg-secondary {
+    @apply bg-slate-700;
+  }
+  
+  .bg-secondary-light {
+    @apply bg-slate-600;
+  }
+  
+  /* Modern Progress Bar - Dark Theme */
+  .progress-bar {
+    height: 6px;
+    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+    border-radius: 3px;
+  }
+  
+  /* Enhanced Animations */
+  .animate-in {
+    animation-duration: 300ms;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+  }
+  
+  .zoom-in-95 {
+    animation-name: zoomIn95;
+  }
+  
+  .fade-in-up {
+    animation-name: fadeInUp;
+  }
+  
+  .slide-in-right {
+    animation-name: slideInRight;
+  }
+  
+  .bounce-in {
+    animation-name: bounceIn;
+  }
+  
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite alternate;
+  }
+  
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  /* Hover Effects - Dark Theme */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  }
+  
+  .hover-glow:hover {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+  }
+  
+  /* Loading Spinner - Dark Theme */
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(148, 163, 184, 0.3);
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Weather Icons Animation */
+  .weather-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .weather-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  /* Form Input Styling - Dark Theme */
+  .input-dark {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .input-dark:focus {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+  }
+
+  .input-dark::placeholder {
+    color: rgba(148, 163, 184, 0.6) !important;
+  }
+
+  /* Select Styling - Dark Theme */
+  .select-dark {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  }
+
+  .select-dark:focus {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    border-color: #3b82f6 !important;
+  }
+
+  /* Textarea Styling - Dark Theme */
+  .textarea-dark {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  }
+
+  .textarea-dark:focus {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    border-color: #3b82f6 !important;
+  }
+  
+  /* Keyframe Animations */
+  @keyframes zoomIn95 {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes pulseGlow {
+    from {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+    to {
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Design Enhancements */
+  @media (max-width: 768px) {
+    .glass {
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(15px);
+    }
+  }
+}
